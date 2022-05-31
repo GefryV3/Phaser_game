@@ -42,11 +42,12 @@ export class Main extends Phaser.Scene {
       .setCollideWorldBounds(true)
       .setImmovable(true);
     this.ball = this.physics.add
-      .sprite(WIDTH / 2, HEIGHT - BALL_SIZE/2 - PLATFORM_HEIGHT, BALL_KEY)
+      .sprite(WIDTH / 2, 180, BALL_KEY)
       .setCircle(BALL_SIZE / 2)
       .setCollideWorldBounds(true);
     this.initBlocks();
     this.ball.setBounce(1);
+    this.physics.world.checkCollision.down = false;
   }
 
   update() {
@@ -59,6 +60,7 @@ export class Main extends Phaser.Scene {
     } else {
       this.platform.setVelocityX(0);
     }
+
     this.stopGame();
   }
 
@@ -68,17 +70,26 @@ export class Main extends Phaser.Scene {
       this.physics.add.collider(
         this.ball,
         this.platform,
-        () => {
-          this.ball.setVelocityY(-BALL_SPEED);
+        (ball) => {
+          ball.setVelocityY(-BALL_SPEED);
         },
         null,
         this
-      );
+      )
+      this.physics.add.collider(this.ball, this.blocks, (ball, block) => {
+        alert(ball.body.velocity.y);
+        block.disableBody(true, true);
+        if(ball.body.velocity.y > 0) {
+            ball.setVelocityY(-BALL_SPEED);
+        } else{
+            ball.setVelocityY(BALL_SPEED);
+        }
+      }, null, this)
     }
   }
 
   stopGame() {
-    if (this.ball.y === HEIGHT - BALL_SIZE / 2) {
+    if (this.ball.y > HEIGHT - BALL_SIZE / 2) {
       this.scene.start(GAME_OVER_SCENE_KEY);
     }
   }
@@ -86,6 +97,13 @@ export class Main extends Phaser.Scene {
   initBlocks() {
     this.blocks = this.physics.add.group({
       immovable: true,
+    //   key: RED_BLOCK_KEY,
+    //   repeat: BLOCK_INFO.count.col,
+    //   setXY: {
+    //       x: BLOCK_INFO.offset.left,
+    //       y: BLOCK_INFO.offset.top,
+    //       stepX: BLOCK_INFO.width + BLOCK_INFO.padding,
+    //   }
     });
 
     for (let i = 0; i < BLOCK_INFO.count.col; i++) {

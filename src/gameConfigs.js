@@ -5,7 +5,7 @@ export const PLATFORM_SPEED = 900;
 export const PLATFORM_WIDTH = 170;
 export const PLATFORM_HEIGHT = 10;
 export const BALL_SIZE = 10;
-export const BALL_SPEED = 1000;
+export const BALL_SPEED = 500; // investigate on value <=800
 export const MAIN_SCENE_KEY = "MAIN";
 export const GAME_OVER_SCENE_KEY = "GAME_OVER";
 
@@ -14,13 +14,13 @@ export const BLOCK_INFO = Object.freeze({
   height: 10,
   count: {
     row: 10,
-    col: 75,
+    col: 74,
   },
   offset: {
     top: 50,
     left: 32,
   },
-  padding: 3,
+  padding: 10,
 });
 
 export const PLATFORM_KEY = "platform";
