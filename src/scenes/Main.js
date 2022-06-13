@@ -77,7 +77,6 @@ export class Main extends Phaser.Scene {
         this
       )
       this.physics.add.collider(this.ball, this.blocks, (ball, block) => {
-        alert(ball.body.velocity.y);
         block.disableBody(true, true);
         if(ball.body.velocity.y > 0) {
             ball.setVelocityY(-BALL_SPEED);

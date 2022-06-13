@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-import { WIDTH, HEIGHT, MAIN_SCENE_KEY, GAME_OVER_SCENE_KEY } from "../gameConfigs" 
+import { WIDTH, HEIGHT, MAIN_SCENE_KEY, GAME_OVER_SCENE_KEY,MAIN_FONT_STYLE } from "../gameConfigs" 
 
 
 export class GameOver extends Phaser.Scene {
@@ -10,7 +10,7 @@ export class GameOver extends Phaser.Scene {
     create() {
       this.controls = this.input.keyboard.createCursorKeys();
       this.add
-      .text(WIDTH/2, HEIGHT/2, ["Game over", "Press SPACE to restart game"], {fontSize:"50px", color:"white"})
+      .text(WIDTH/2, HEIGHT/2, ["Game over", "Press SPACE to restart game"], MAIN_FONT_STYLE)
       .setAlign("center")
       .setOrigin(0.5);
     }
