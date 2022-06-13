@@ -20,6 +20,7 @@ import {
   GAME_OVER_SCENE_KEY,
   BLOCK_INFO,
   MAIN_SCENE_KEY,
+  LOBBY_SCENE_KEY
 } from "../gameConfigs";
 
 export class Main extends Phaser.Scene {
@@ -48,6 +49,8 @@ export class Main extends Phaser.Scene {
     this.initBlocks();
     this.ball.setBounce(1);
     this.physics.world.checkCollision.down = false;
+    this.input.keyboard.on("keydown-ESC", () => this.scene.start(LOBBY_SCENE_KEY));
+
   }
 
   update() {

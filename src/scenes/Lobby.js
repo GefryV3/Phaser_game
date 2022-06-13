@@ -48,7 +48,7 @@ export class Lobby extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(WIDTH * 0.5, HEIGHT * 0.9, "Press SPACE to select", { ...MAIN_FONT_STYLE, fontSize: "20px" })
+      .text(WIDTH * 0.5, HEIGHT * 0.9, "Press ENTER to select", { ...MAIN_FONT_STYLE, fontSize: "20px" })
       .setAlign("center")
       .setOrigin(0.5);
 
@@ -77,21 +77,24 @@ export class Lobby extends Phaser.Scene {
     muteButton.setAction(() => console.log("*выключение звука*"));
     this.buttons.push(muteButton);
 
+    this.input.keyboard.on("keydown-ENTER", () => this.getActiveButton().callAction());
+
     this.activeButtonIndex = 0;
   }
 
   update() {
     const upJustPressed = Phaser.Input.Keyboard.JustDown(this.controls.up);
     const downJustPressed = Phaser.Input.Keyboard.JustDown(this.controls.down);
-    const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.controls.space);
+    // const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.controls.space);
 
     if (upJustPressed) {
       this.nextActiveIndex(-1);
     } else if (downJustPressed) {
       this.nextActiveIndex(1);
-    } else if (spaceJustPressed) {
-      this.getActiveButton().callAction();
     }
+    // } else if (spaceJustPressed) {
+    //   this.getActiveButton().callAction();
+    // }
   }
 
   getActiveButton() {
@@ -135,7 +138,7 @@ class LobbyButton {
       throw new TypeError("parametr in setAction is not function");
     }
   }
-  
+
   callAction() {
     return this.action();
   }
