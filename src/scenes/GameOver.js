@@ -9,6 +9,7 @@ export class GameOver extends Phaser.Scene {
     }
     create() {
       this.controls = this.input.keyboard.createCursorKeys();
+      
       this.add
       .text(WIDTH/2, HEIGHT/2, ["Game over", "Press SPACE to restart game"], MAIN_FONT_STYLE)
       .setAlign("center")

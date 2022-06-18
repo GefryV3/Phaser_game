@@ -20,7 +20,10 @@ import {
   GAME_OVER_SCENE_KEY,
   BLOCK_INFO,
   MAIN_SCENE_KEY,
-  LOBBY_SCENE_KEY
+  LOBBY_SCENE_KEY,
+  X_TEXT,
+  Y_TEXT,
+  SCORE_STEP,
 } from "../gameConfigs";
 
 export class Main extends Phaser.Scene {
@@ -38,19 +41,27 @@ export class Main extends Phaser.Scene {
 
   create() {
     this.controls = this.input.keyboard.createCursorKeys();
+
     this.platform = this.physics.add
-      .sprite(WIDTH / 2, HEIGHT - PLATFORM_HEIGHT/2, PLATFORM_KEY)
+      .sprite(WIDTH / 2, HEIGHT - PLATFORM_HEIGHT / 2, PLATFORM_KEY)
       .setCollideWorldBounds(true)
       .setImmovable(true);
+
     this.ball = this.physics.add
       .sprite(WIDTH / 2, 180, BALL_KEY)
       .setCircle(BALL_SIZE / 2)
       .setCollideWorldBounds(true);
+
     this.initBlocks();
     this.ball.setBounce(1);
     this.physics.world.checkCollision.down = false;
+
     this.input.keyboard.on("keydown-ESC", () => this.scene.start(LOBBY_SCENE_KEY));
 
+    this.scoreBoard = this.add
+      .text(X_TEXT, Y_TEXT, "Score = 0", { fontSize: "18px", color: "white" })
+      .setAlign("center");
+    this.score = 0;
   }
 
   update() {
@@ -70,6 +81,8 @@ export class Main extends Phaser.Scene {
   startGame() {
     if (this.ball.body.speed === 0) {
       this.ball.setVelocity(Phaser.Math.Between(-BALL_SPEED, BALL_SPEED), -BALL_SPEED);
+
+      // setup collide between ball and platform
       this.physics.add.collider(
         this.ball,
         this.platform,
@@ -78,15 +91,26 @@ export class Main extends Phaser.Scene {
         },
         null,
         this
-      )
-      this.physics.add.collider(this.ball, this.blocks, (ball, block) => {
-        block.disableBody(true, true);
-        if(ball.body.velocity.y > 0) {
-            ball.setVelocityY(-BALL_SPEED);
-        } else{
-            ball.setVelocityY(BALL_SPEED);
-        }
-      }, null, this)
+      );
+
+      this.physics.add.collider(
+        this.ball,
+        this.blocks,
+        (ball, block) => this.blocksColliderHandler(ball, block),
+        null,
+        this
+      );
+    }
+  }
+
+  blocksColliderHandler(ball, block) {
+    block.disableBody(true, true);
+    this.score += SCORE_STEP;
+    this.scoreBoard.setText("Points: " + this.score);
+    if (ball.body.velocity.y > 0) {
+      ball.setVelocityY(-BALL_SPEED);
+    } else {
+      ball.setVelocityY(BALL_SPEED);
     }
   }
 
@@ -99,13 +123,13 @@ export class Main extends Phaser.Scene {
   initBlocks() {
     this.blocks = this.physics.add.group({
       immovable: true,
-    //   key: RED_BLOCK_KEY,
-    //   repeat: BLOCK_INFO.count.col,
-    //   setXY: {
-    //       x: BLOCK_INFO.offset.left,
-    //       y: BLOCK_INFO.offset.top,
-    //       stepX: BLOCK_INFO.width + BLOCK_INFO.padding,
-    //   }
+      //   key: RED_BLOCK_KEY,
+      //   repeat: BLOCK_INFO.count.col,
+      //   setXY: {
+      //       x: BLOCK_INFO.offset.left,
+      //       y: BLOCK_INFO.offset.top,
+      //       stepX: BLOCK_INFO.width + BLOCK_INFO.padding,
+      //   }
     });
 
     for (let i = 0; i < BLOCK_INFO.count.col; i++) {
