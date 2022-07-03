@@ -1,10 +1,14 @@
+//додання файзеру
 import Phaser from "phaser";
+
+//імпорт асетів
 import platform from "./../assets/platform.jpg";
 import red_block from "./../assets/red_block.jpg";
 import green_block from "./../assets/green_block.jpg";
 import grey_block from "./../assets/grey_block.jpg";
 import ball from "./../assets/ball.png";
 
+//імпорт констант
 import {
   WIDTH,
   HEIGHT,
@@ -26,11 +30,13 @@ import {
   SCORE_STEP,
 } from "../gameConfigs";
 
+//створення основної сцени
 export class Main extends Phaser.Scene {
   constructor() {
     super(MAIN_SCENE_KEY);
   }
 
+  //прелоад картинок асетів
   preload() {
     this.load.image(PLATFORM_KEY, platform);
     this.load.image(RED_BLOCK_KEY, red_block);
@@ -40,24 +46,34 @@ export class Main extends Phaser.Scene {
   }
 
   create() {
+    //збереження об'єкту для обробк натскань клавіш
     this.controls = this.input.keyboard.createCursorKeys();
 
+    //опрацювання фізики платформи
     this.platform = this.physics.add
       .sprite(WIDTH / 2, HEIGHT - PLATFORM_HEIGHT / 2, PLATFORM_KEY)
       .setCollideWorldBounds(true)
       .setImmovable(true);
 
+    //опрацювання фізики м'яча
     this.ball = this.physics.add
       .sprite(WIDTH / 2, 180, BALL_KEY)
       .setCircle(BALL_SIZE / 2)
       .setCollideWorldBounds(true);
 
+    //створення блоків
     this.initBlocks();
+
+    //задання відскоків м'яча
     this.ball.setBounce(1);
+
+    //вимкнення колізії нижньої межі сцени
     this.physics.world.checkCollision.down = false;
 
+    //опрацювання натискань кнопки ентер
     this.input.keyboard.on("keydown-ESC", () => this.scene.start(LOBBY_SCENE_KEY));
 
+    //додання рахунки
     this.scoreBoard = this.add
       .text(X_TEXT, Y_TEXT, "Score = 0", { fontSize: "18px", color: "white" })
       .setAlign("center");
@@ -65,6 +81,7 @@ export class Main extends Phaser.Scene {
   }
 
   update() {
+    //опрацювання натискань клавіш
     if (this.controls.left.isDown) {
       this.platform.setVelocityX(-PLATFORM_SPEED);
       this.startGame();
@@ -82,7 +99,7 @@ export class Main extends Phaser.Scene {
     if (this.ball.body.speed === 0) {
       this.ball.setVelocity(Phaser.Math.Between(-BALL_SPEED, BALL_SPEED), -BALL_SPEED);
 
-      // setup collide between ball and platform
+      //створення колайдеру між м'ячем і платформою
       this.physics.add.collider(
         this.ball,
         this.platform,
@@ -93,6 +110,7 @@ export class Main extends Phaser.Scene {
         this
       );
 
+      //створення колайдеру між м'ячем і блоками
       this.physics.add.collider(
         this.ball,
         this.blocks,
@@ -103,6 +121,7 @@ export class Main extends Phaser.Scene {
     }
   }
 
+  //функція для опрацювання зіткнення блоків з м'ячем
   blocksColliderHandler(ball, block) {
     block.disableBody(true, true);
     this.score += SCORE_STEP;
@@ -114,24 +133,21 @@ export class Main extends Phaser.Scene {
     }
   }
 
+  //функція для припинення гри
   stopGame() {
     if (this.ball.y > HEIGHT - BALL_SIZE / 2) {
+      //перехід на сцену гейм-оверу
       this.scene.start(GAME_OVER_SCENE_KEY);
     }
   }
 
+  //налаштування блоків
   initBlocks() {
     this.blocks = this.physics.add.group({
       immovable: true,
-      //   key: RED_BLOCK_KEY,
-      //   repeat: BLOCK_INFO.count.col,
-      //   setXY: {
-      //       x: BLOCK_INFO.offset.left,
-      //       y: BLOCK_INFO.offset.top,
-      //       stepX: BLOCK_INFO.width + BLOCK_INFO.padding,
-      //   }
     });
 
+    //створення блоків
     for (let i = 0; i < BLOCK_INFO.count.col; i++) {
       for (let u = 0; u < BLOCK_INFO.count.row; u++) {
         const blockX = i * (BLOCK_INFO.width + BLOCK_INFO.padding) + BLOCK_INFO.offset.left;
